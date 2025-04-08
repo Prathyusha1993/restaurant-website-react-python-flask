@@ -33,3 +33,45 @@ def add_menu_item():
 def get_menu_by_category(category):
     menu_items = MenuItem.query.filter_by(category=category).all()
     return jsonify([item.to_json() for item in menu_items])
+
+
+@app.route('/menu/<int:id>', methods=['GET'])
+def get_menu_item_id(id):
+    item = MenuItem.query.get_or_404(id)
+    if item is None:
+        return jsonify({'error': 'Item not found'}), 404
+    return jsonify({'id': item.id, 'name': item.name, 'price': item.price, 'description': item.description, 'category': item.category})
+
+
+@app.route('/menu/<int:id>', methods=['PATCH'])
+def update_menu_item(id):
+    try:
+        item = MenuItem.query.get_or_404(id)
+        if item is None:
+            return jsonify({'error': 'Item not found.'}), 404
+        
+        data = request.json
+        item.name = data.get('name', item.name)
+        item.price = data.get('price', item.price)
+        item.description = data.get('description', item.description)
+        item.category = data.get('category', item.category)
+        db.session.commit()
+        return jsonify(item.to_json()), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+    
+
+@app.route('/menu/<int:id>', methods=['DELETE'])
+def delete_menu_item(id):
+    try:
+        item = MenuItem.query.get_or_404(id)
+        if item is None:
+            return jsonify({'error': 'Item not found.'}), 404
+        
+        db.session.delete(item)
+        db.session.commit()
+        return jsonify({'message': 'menu item deleted succesfully!'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
