@@ -75,3 +75,12 @@ def delete_menu_item(id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/menu/search', methods=['GET'])
+def search_menu_items():
+    query = request.args.get('q', '')    #get the searchquery from query parameter
+    if not query:
+        return jsonify({'error': 'Search query is required'}), 400
+    
+    menu_items = MenuItem.query.filter(MenuItem.name.ilike(f'%{query}%')).all()
+    return jsonify([item.to_json() for item in menu_items])
