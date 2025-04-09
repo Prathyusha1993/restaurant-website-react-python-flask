@@ -13,7 +13,7 @@ function Header() {
         <Container>
           <Navbar.Brand href="#home">Aha Biryani's</Navbar.Brand>
           <Nav className="me-auto justify-content-end flex-grow-1 pe-3">
-          <Form className="d-flex">
+          {/* <Form className="d-flex">
             <Form.Control
               type="search"
               placeholder="Search"
@@ -21,9 +21,9 @@ function Header() {
               aria-label="Search"
             />
             <Button variant="outline-success">Search</Button>
-          </Form>
-            <Nav.Link href="#home">About US</Nav.Link>
-            <Nav.Link href="#features">Our Menu</Nav.Link>
+          </Form> */}
+            <Nav.Link href="/">About US</Nav.Link>
+            <Nav.Link href="/menu">Our Menu</Nav.Link>
             <Nav.Link href="#pricing">Catering</Nav.Link>
             <Nav.Link href="#pricing">Contact</Nav.Link>
           </Nav>

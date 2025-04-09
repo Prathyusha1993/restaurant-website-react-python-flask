@@ -1,6 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Image } from "react-bootstrap";
 import Footer from "./Footer";
+import Carousel from "react-bootstrap/Carousel";
 
 function Aboutus() {
   const galleryImages = [
@@ -8,11 +9,28 @@ function Aboutus() {
     "gallery-Mutton-Biryani.webp",
     "gallery-starter-chicken.jpg",
     "gallery-tandoori-paneer.jpg",
+    "gallery-dal-fry.jpg",
+    "gallery-chicken-tandoori.jpg",
+    "gallery-egg-fry.jpeg",
+    "gallery-mushroom.JPG",
+    "gallery-mutton-kadai.jpg",
+    "gallery-nann.webp",
+    "gallery-roti.webp",
+    "gallery-prawns-biryani.webp"
   ];
+
+  const chunkArray = (array, size) => {
+    const chunked = [];
+    for (let i = 0; i < array.length; i += size) {
+      chunked.push(array.slice(i, i + size));
+    }
+    return chunked;
+  };
+  const imageChunked = chunkArray(galleryImages, 4);
 
   return (
     <>
-      <Container className="p-0 w-100" style={{marginTop:'10px'}}>
+      <Container className="p-0 w-100" style={{ marginTop: "10px" }}>
         {/* Hero Section */}
         <Row className="g-0 w-100">
           <Col className="p-0 w-100">
@@ -95,24 +113,35 @@ function Aboutus() {
       </Row> */}
 
         {/* Gallery */}
+
         <Row className="text-center">
           <Col>
             <h2 className="mb-4">Gallery</h2>
           </Col>
         </Row>
-        <Row className="g-3">
-          {galleryImages.map((img, index) => (
-            <Col md={3} key={index}>
-              <Image
-                src={`/images/${img}`}
-                style={{ height: "250px", objectFit: "cover", width: "100%" }}
-                fluid
-                rounded
-                alt={`Gallery image ${index + 1}`}
-              />
-            </Col>
+        <Carousel interval={3000} indicators={false}>
+          {imageChunked.map((group, idx) => (
+            <Carousel.Item key={idx}>
+              <Row className="g-3 justify-content-center">
+                {group.map((img, index) => (
+                  <Col md={3} key={index}>
+                    <Image
+                      src={`/images/${img}`}
+                      style={{
+                        height: "250px",
+                        objectFit: "cover",
+                        width: "100%",
+                      }}
+                      fluid
+                      rounded
+                      alt={`Gallery image ${index + 1}`}
+                    />
+                  </Col>
+                ))}
+              </Row>
+            </Carousel.Item>
           ))}
-        </Row>
+        </Carousel>
       </Container>
       <Footer />
     </>

@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import Header from './components/Header'
-import Footer from './components/Footer'
 import Aboutus from './components/Aboutus'
 import './App.css'
+import { BrowserRouter, Route, Routes } from "react-router";
+import Menu from './components/Menu';
 
 function App() {
 
@@ -10,8 +11,12 @@ function App() {
     <>
       {/* <h1>Building Restaurant website</h1> */}
       <Header />
-      <Aboutus />
-      {/* <Footer /> */}
+      <BrowserRouter>
+        <Routes>
+          <Route index element={<Aboutus />} />
+          <Route path='/menu' element={<Menu />} />
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
