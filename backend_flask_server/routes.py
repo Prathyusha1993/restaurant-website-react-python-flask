@@ -11,7 +11,7 @@ def get_menu():
 def add_menu_item():
     try:
         data = request.json
-        required_fields = ['name', 'price', 'description', 'category']
+        required_fields = ['name', 'price', 'description', 'veg', 'spicy', 'img_url', 'category']
         for field in required_fields:
             if field not in data or not data.get(field):
                 return jsonify({'error': f'Missing field: {field}'}), 400
@@ -19,8 +19,11 @@ def add_menu_item():
         name = data.get('name')
         price = data.get('price')
         description = data.get('description')
+        veg = data.get('veg')
+        spicy = data.get('spicy')
+        img_url = data.get('img_url')
         category = data.get('category')
-        new_item = MenuItem(name=name, price=price, description=description, category=category)
+        new_item = MenuItem(name=name, price=price, description=description, veg=veg, spicy=spicy, img_url=img_url, category=category)
         db.session.add(new_item)
         db.session.commit()
         return jsonify(new_item.to_json()), 201
@@ -40,7 +43,7 @@ def get_menu_item_id(id):
     item = MenuItem.query.get_or_404(id)
     if item is None:
         return jsonify({'error': 'Item not found'}), 404
-    return jsonify({'id': item.id, 'name': item.name, 'price': item.price, 'description': item.description, 'category': item.category})
+    return jsonify({'id': item.id, 'name': item.name, 'price': item.price, 'description': item.description, 'veg': item.veg, 'spicy':item.spicy, 'img_url':item.img_url, 'category': item.category})
 
 
 @app.route('/menu/<int:id>', methods=['PATCH'])
@@ -54,6 +57,9 @@ def update_menu_item(id):
         item.name = data.get('name', item.name)
         item.price = data.get('price', item.price)
         item.description = data.get('description', item.description)
+        item.veg = data.get('veg', item.veg)
+        item.spicy = data.get('spicy', item.spicy)
+        item.img_url = data.get('img_url', item.img_url)
         item.category = data.get('category', item.category)
         db.session.commit()
         return jsonify(item.to_json()), 200
