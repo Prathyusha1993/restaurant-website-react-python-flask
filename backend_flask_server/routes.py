@@ -13,7 +13,7 @@ def add_menu_item():
         data = request.json
         required_fields = ['name', 'price', 'description', 'veg', 'spicy', 'img_url', 'category']
         for field in required_fields:
-            if field not in data or not data.get(field):
+            if field not in data:
                 return jsonify({'error': f'Missing field: {field}'}), 400
         
         name = data.get('name')

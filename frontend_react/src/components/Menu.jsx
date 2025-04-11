@@ -1,99 +1,124 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Accordion, Button, Badge, Image, ButtonGroup } from "react-bootstrap";
 import { IoMdRadioButtonOn } from "react-icons/io";
 import { FaPepperHot } from "react-icons/fa";
 import Footer from "./Footer";
+import { BASE_URL } from "../App";
 
-const menuData = {
-  Biryani: [
-    {
-      name: "Hyderabadi Chicken Biryani",
-      price: "$12.99",
-      veg: false,
-      spicy: true,
-      img: "/images/biryani1.jpg",
-    },
-    {
-      name: "Veg Dum Biryani",
-      price: "$10.99",
-      veg: true,
-      spicy: false,
-      img: "/images/biryani2.jpg",
-    },
-  ],
-  Shawarma: [
-    {
-      name: "Chicken Shawarma Wrap",
-      price: "$8.99",
-      veg: false,
-      spicy: false,
-      img: "/images/shawarma1.jpg",
-    },
-    {
-      name: "Paneer Shawarma",
-      price: "$9.99",
-      veg: true,
-      spicy: true,
-      img: "/images/shawarma2.jpg",
-    },
-  ],
-  Starters: [
-    {
-      name: "Chicken Shawarma Wrap",
-      price: "$8.99",
-      veg: false,
-      spicy: false,
-      img: "/images/shawarma1.jpg",
-    },
-    {
-      name: "Paneer Shawarma",
-      price: "$9.99",
-      veg: true,
-      spicy: true,
-      img: "/images/shawarma2.jpg",
-    },
-  ],
-  Tandooris: [
-    {
-      name: "Chicken Shawarma Wrap",
-      price: "$8.99",
-      veg: false,
-      spicy: false,
-      img: "/images/shawarma1.jpg",
-    },
-    {
-      name: "Paneer Shawarma",
-      price: "$9.99",
-      veg: true,
-      spicy: true,
-      img: "/images/shawarma2.jpg",
-    },
-  ],
-  Desserts: [
-    {
-      name: "Chicken Shawarma Wrap",
-      price: "$8.99",
-      veg: false,
-      spicy: false,
-      img: "/images/shawarma1.jpg",
-    },
-    {
-      name: "Paneer Shawarma",
-      price: "$9.99",
-      veg: true,
-      spicy: true,
-      img: "/images/shawarma2.jpg",
-    },
-  ],
-};
+// const menuData = {
+//   Biryani: [
+//     {
+//       name: "Hyderabadi Chicken Biryani",
+//       price: "$12.99",
+//       veg: false,
+//       spicy: true,
+//       img: "/images/biryani1.jpg",
+//     },
+//     {
+//       name: "Veg Dum Biryani",
+//       price: "$10.99",
+//       veg: true,
+//       spicy: false,
+//       img: "/images/biryani2.jpg",
+//     },
+//   ],
+//   Shawarma: [
+//     {
+//       name: "Chicken Shawarma Wrap",
+//       price: "$8.99",
+//       veg: false,
+//       spicy: false,
+//       img: "/images/shawarma1.jpg",
+//     },
+//     {
+//       name: "Paneer Shawarma",
+//       price: "$9.99",
+//       veg: true,
+//       spicy: true,
+//       img: "/images/shawarma2.jpg",
+//     },
+//   ],
+//   Starters: [
+//     {
+//       name: "Chicken Shawarma Wrap",
+//       price: "$8.99",
+//       veg: false,
+//       spicy: false,
+//       img: "/images/shawarma1.jpg",
+//     },
+//     {
+//       name: "Paneer Shawarma",
+//       price: "$9.99",
+//       veg: true,
+//       spicy: true,
+//       img: "/images/shawarma2.jpg",
+//     },
+//   ],
+//   Tandooris: [
+//     {
+//       name: "Chicken Shawarma Wrap",
+//       price: "$8.99",
+//       veg: false,
+//       spicy: false,
+//       img: "/images/shawarma1.jpg",
+//     },
+//     {
+//       name: "Paneer Shawarma",
+//       price: "$9.99",
+//       veg: true,
+//       spicy: true,
+//       img: "/images/shawarma2.jpg",
+//     },
+//   ],
+//   Desserts: [
+//     {
+//       name: "Chicken Shawarma Wrap",
+//       price: "$8.99",
+//       veg: false,
+//       spicy: false,
+//       img: "/images/shawarma1.jpg",
+//     },
+//     {
+//       name: "Paneer Shawarma",
+//       price: "$9.99",
+//       veg: true,
+//       spicy: true,
+//       img: "/images/shawarma2.jpg",
+//     },
+//   ],
+// };
 
 function Menu() {
     const [selectedCategory, setSelectedCategory] = useState("All");
+    const [menuData, setMenuData] = useState([])
+    const [loading, setLoading] = useState(true)
 
     const getFilteredMenu = () => {
         if (selectedCategory === 'All') return menuData;
         return { [selectedCategory]: menuData[selectedCategory]}
     };
+
+    useEffect(() => {
+        const getMenu = async () => {
+            try{
+                const res = await fetch(BASE_URL+'menu')
+                const data = await res.json()
+                console.log(data)
+
+                if (!res.ok){
+                    throw new Error(data.error || 'Somethig went wrong')
+                }
+                setMenuData(data)
+            }
+            catch(err){
+                console.log(err)
+            }
+            finally{
+                setLoading(false)
+            }
+        }
+        getMenu()
+    }, [])
 
   return (
     <>
