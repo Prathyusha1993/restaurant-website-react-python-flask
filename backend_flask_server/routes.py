@@ -59,7 +59,7 @@ def update_menu_item(id):
         item.description = data.get('description', item.description)
         item.veg = data.get('veg', item.veg)
         item.spicy = data.get('spicy', item.spicy)
-        item.img_url = data.get('img_url', item.img_url)
+        item.img_url = data.get('imgUrl', item.img_url)
         item.category = data.get('category', item.category)
         db.session.commit()
         return jsonify(item.to_json()), 200

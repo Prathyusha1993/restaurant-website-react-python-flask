@@ -158,8 +158,9 @@ function Menu() {
               "All",
               "Starters",
               "Tandooris",
-              "Biryani",
-              "Shawarma",
+              "Biryanis",
+              "Shawarmas",
+              "Breads",
               "Desserts",
             ].map((category, index) => (
               <Button
@@ -186,7 +187,7 @@ function Menu() {
                         <Col md={6} className="mb-4" key={idx}>
                             <div className="d-flex">
                                 <Image
-                                    src={item.img}
+                                    src={item.imgUrl}
                                     width={80}
                                     height={80}
                                     className="me-3 rounded"
