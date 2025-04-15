@@ -98,6 +98,15 @@ function Menu() {
         return { [selectedCategory]: menuData[selectedCategory]}
     };
 
+    const groupByCategory = (items) => {
+        return items.reduce((acc, item) => {
+            const category = item.category.charAt(0).toUpperCase() + item.category.slice(1);
+            if (!acc[category]) acc[category] = [];
+            acc[category].push(item);
+            return acc;
+        }, {});
+    };
+
     useEffect(() => {
         const getMenu = async () => {
             try{
@@ -108,7 +117,8 @@ function Menu() {
                 if (!res.ok){
                     throw new Error(data.error || 'Somethig went wrong')
                 }
-                setMenuData(data)
+                const groupedData = groupByCategory(data)
+                setMenuData(groupedData)
             }
             catch(err){
                 console.log(err)
@@ -186,13 +196,19 @@ function Menu() {
                                  <div>
                                     <h5 className="mb-1">
                                         {item.name}{" "}
-                                        {item.veg ? 
+                                        {item.veg !== null && (item.veg ? 
                                         (<Badge bg='light' className="ms-1">
-                                            <span style={{border:'1px solid green', padding:'0px 2px 2px 2px'}}><IoMdRadioButtonOn style={{color:'green' }}/></span>
-                                        </Badge>) : 
-                                        (<Badge bg='light' className="ms-1">
-                                            <span style={{border:'1px solid red', padding:'0px 2px 2px 2px'}}><IoMdRadioButtonOn style={{color:'red'}}/></span>
-                                        </Badge>)}
+                                            <span style={{border:'1px solid green', padding:'0px 2px 2px 2px'}}>
+                                                <IoMdRadioButtonOn style={{color:'green' }}/>
+                                            </span>
+                                        </Badge>) : (
+                                        <Badge bg='light' className="ms-1">
+                                            <span style={{border:'1px solid red', padding:'0px 2px 2px 2px'}}>
+                                                <IoMdRadioButtonOn style={{color:'red'}}/>
+                                            </span>
+                                        </Badge>
+                                        )
+                                        )}
                                         {item.spicy && <Badge bg='light' className="ms-2"><FaPepperHot style={{color:'red'}} /></Badge>}
                                     </h5>
                                     <p className="mb-2">{item.price}</p>
