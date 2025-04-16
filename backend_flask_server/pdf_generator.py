@@ -13,7 +13,7 @@ def generate_menu_pdf():
         y = height - 50
 
         c.setFont('Helvetica-Bold', 16)
-        c.drawCentredString(width / 2, y, "Restaurant Menu")
+        c.drawCentredString(width / 2, y, "Aha Biryani's Restaurant Menu")
         y -= 40
 
         c.setFont('Helvetica', 12)

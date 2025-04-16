@@ -24,7 +24,7 @@ function Header() {
           </Form> */}
             <Nav.Link href="/">About US</Nav.Link>
             <Nav.Link href="/menu">Our Menu</Nav.Link>
-            <Nav.Link href="#pricing">Catering</Nav.Link>
+            <Nav.Link href="/catering">Catering</Nav.Link>
             <Nav.Link href="#pricing">Contact</Nav.Link>
           </Nav>
         </Container>
