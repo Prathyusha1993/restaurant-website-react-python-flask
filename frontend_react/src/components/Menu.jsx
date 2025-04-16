@@ -224,7 +224,11 @@ function Menu() {
             ))}
         </Accordion>
         <div className="text-center mt-5">
-            <a href='/downloads/menu.pdf' download className="btn btn-outline-secondary">Download Full Menu(PDF)</a>
+            <a href='http://127.0.0.1:5000/static/downloads/menu.pdf' 
+            target="_blank"
+            rel="noopener noreferrer"
+            download 
+            className="btn btn-outline-secondary">Download Full Menu(PDF)</a>
         </div>
       </Container>
       <Footer />

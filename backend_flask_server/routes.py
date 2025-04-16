@@ -1,6 +1,7 @@
 from main import app, db
 from flask import jsonify, request
 from models import MenuItem
+from pdf_generator import generate_menu_pdf
 
 @app.route('/menu', methods=['GET'])
 def get_menu():
@@ -26,6 +27,9 @@ def add_menu_item():
         new_item = MenuItem(name=name, price=price, description=description, veg=veg, spicy=spicy, img_url=img_url, category=category)
         db.session.add(new_item)
         db.session.commit()
+
+        generate_menu_pdf()  # Call the PDF generation function after adding the item
+
         return jsonify(new_item.to_json()), 201
     except Exception as e:
         db.session.rollback()
@@ -62,6 +66,9 @@ def update_menu_item(id):
         item.img_url = data.get('imgUrl', item.img_url)
         item.category = data.get('category', item.category)
         db.session.commit()
+
+        generate_menu_pdf()
+
         return jsonify(item.to_json()), 200
     except Exception as e:
         db.session.rollback()
@@ -90,3 +97,9 @@ def search_menu_items():
     
     menu_items = MenuItem.query.filter(MenuItem.name.ilike(f'%{query}%')).all()
     return jsonify([item.to_json() for item in menu_items])
+
+
+@app.route('/generate-pdf')
+def generate_pdf_route():
+    generate_menu_pdf()
+    return jsonify({'message': 'PDF generated successfully'}), 200
