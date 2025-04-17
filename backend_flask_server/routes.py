@@ -1,7 +1,15 @@
 from main import app, db
 from flask import jsonify, request
-from models import MenuItem
+from models import MenuItem, InquireForm
 from pdf_generator import generate_menu_pdf
+import smtplib
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+# Load environment variables
+MY_EMAIL = os.getenv('MY_EMAIL')
+MY_PASSWORD = os.getenv('MY_PASSWORD')
 
 @app.route('/menu', methods=['GET'])
 def get_menu():
@@ -103,3 +111,49 @@ def search_menu_items():
 def generate_pdf_route():
     generate_menu_pdf()
     return jsonify({'message': 'PDF generated successfully'}), 200
+
+@app.route('/inquire', methods=['POST'])
+def inquire_form():
+    try:
+        data = request.json
+        required_fields = ['name', 'email', 'phone', 'date', 'time', 'number_of_guests', 'message']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'error': f'Missing field: {field}'}), 400
+            
+        name = data.get('name')
+        email = data.get('email')
+        phone = data.get('phone')
+        date = data.get('date')
+        time = data.get('time')
+        number_of_guests = int(data.get('number_of_guests', 0))
+        message = data.get('message')
+
+        new_form = InquireForm(name=name, email=email, phone=phone, date=date, time=time, number_of_guests=number_of_guests, message=message)
+        db.session.add(new_form)
+        db.session.commit()
+
+        # Send email notification
+        with smtplib.SMTP('smtp.gmail.com', port=587) as connection:
+            connection.starttls()
+            connection.login(user=MY_EMAIL, password=MY_PASSWORD)
+            msg = f"""Subject: New Catering Inquiry
+
+            New inquiry details:
+
+            Name: {name}
+            Email: {email}
+            Phone: {phone}
+            Date: {date}
+            Time: {time}
+            Guests: {number_of_guests}
+            Message: {message}
+            """
+            connection.sendmail(from_addr=email, to_addrs=MY_EMAIL, msg=msg)
+            connection.close()
+
+        return jsonify({'message': 'Inquiry Form submitted successfully!'}), 201
+    except Exception as e:
+        db.session.rollback()
+        print(f'error in inquire form: {e}')
+        return jsonify({'error': str(e)}), 500

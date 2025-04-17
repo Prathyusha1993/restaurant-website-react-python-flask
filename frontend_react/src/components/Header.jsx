@@ -8,10 +8,10 @@ import Button from 'react-bootstrap/Button';
 function Header() {
   return (
     <>
-    {/* <div style={{ backgroundColor: "#03384b", color: "white", padding: "20px" }}> */}
-      <Navbar bg="light" data-bs-theme="light">
+    {/*  <div style={{ backgroundColor: "#03384b", color: "white", padding: "20px" }}> */}
+      <Navbar  bg="light" data-bs-theme="light">
         <Container>
-          <Navbar.Brand href="#home">Aha Biryani's</Navbar.Brand>
+          <Navbar.Brand href="/">Aha Biryani's</Navbar.Brand>
           <Nav className="me-auto justify-content-end flex-grow-1 pe-3">
           {/* <Form className="d-flex">
             <Form.Control

@@ -1,5 +1,7 @@
 import React from 'react'
 import {Carousel, Container, Row, Col, Card, Form, Button, Accordion} from 'react-bootstrap'
+import ModalForm from './ModalForm'
+import Footer from './Footer'
 
 function Catering() {
     const cateringImages = [
@@ -9,6 +11,21 @@ function Catering() {
         "/images/catering-pic4.jpg",
         "/images/catering-pic5.jpg",
         "/images/catering-pic6.jpg",
+    ]
+
+    const menuHighlights = [
+        {
+            title: 'Chicken Biryani',
+            img: '/images/Chicken-Biryani-menu-highlight.jpg',
+        },
+        {
+            title: 'Paneer Shawarma',
+            img: '/images/paneer-shawarma-menu-highlight.jpg',
+        },
+        {
+            title: 'Tandoori Platter',
+            img: '/images/tandoori_platter-menu-highlight.avif',
+        }
     ]
   return (
     <>
@@ -70,15 +87,16 @@ function Catering() {
     <Container className='mb-5'>
         <h2 className='text-center mb-4'>Menu Highlights</h2>
         <Row>
-        {["Chicken Biryani", "Paneer Shawarma", "Tandoori Platter"].map((item, idx) => (
+        {menuHighlights.map((item, idx) => (
           <Col md={4} key={idx} className="mb-4">
             <Card>
               <Card.Img
                 variant="top"
-                src={`https://dummyimage.com/400x250/cccccc/000000.png&text=${encodeURIComponent(item)}`}
+                src={item.img}
+                style={{ height: '350px', objectFit: 'cover' }}
               />
               <Card.Body>
-                <Card.Title>{item}</Card.Title>
+                <Card.Title>{item.title}</Card.Title>
                 <Card.Text>
                   Perfect for all kinds of gatherings and loved by everyone.
                 </Card.Text>
@@ -90,45 +108,46 @@ function Catering() {
     </Container>
 
     {/* Booking form and order online */}
+    <ModalForm />
+
+    {/* catering menu pdf download */}
+    <div className='text-center mb-5'>
+        <a href='http://127.0.0.1:5000/static/downloads/menu.pdf' 
+        download
+        target='_blank'
+        rel='noopener noreferrer'
+        className='btn btn-outline-secondary'>
+            Download Full Catering Menu (PDF)
+        </a>
+    </div>
+
+    {/* FAQ's */}
     <Container className='mb-5'>
-        <Row>
-            <Col md={6} className='text-center d-flex flex-column justify-content-center'>
-            <h3>Want to plan an event</h3>
-            <Button variant='primary' size='lg' className='mt-3'>Order Online</Button>
-            </Col>
-            <Col md={6}>
-            <h3 className='mb-3'>Booking Form</h3>
-            <Form>
-              <Form.Group className="mb-3">
-                <Form.Label>Name</Form.Label>
-                <Form.Control type="text" placeholder="Enter your name" />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Email</Form.Label>
-                <Form.Control type="email" placeholder="Enter email" />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Phone</Form.Label>
-                <Form.Control type="text" placeholder="Phone number" />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Event Date</Form.Label>
-                <Form.Control type="date" />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Number of Guests</Form.Label>
-                <Form.Control type="number" />
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Message</Form.Label>
-                <Form.Control as="textarea" rows={3} placeholder="Tell us more about your event" />
-              </Form.Group>
-              <Button variant="success" type="submit">Submit</Button>
-            </Form>
-            </Col>
-        </Row>
+        <h2 className='text-center mb-4'>
+            <Accordion>
+                <Accordion.Item eventKey="0">
+                    <Accordion.Header>Do you offer vegetarian options?</Accordion.Header>
+                    <Accordion.Body style={{fontSize:'16px'}}>
+                        Yes, we have a wide variety of vegetarian dishes like Veg Birayni, Paneer Shawarma, and Tandoori Veg Platters. 
+                    </Accordion.Body>
+                </Accordion.Item>
+                <Accordion.Item eventKey="1">
+            <Accordion.Header>How early should I book catering for my event?</Accordion.Header>
+            <Accordion.Body style={{fontSize:'16px'}}>
+              We recommend booking at least 2 weeks in advance to ensure availability and proper planning.
+            </Accordion.Body>
+          </Accordion.Item>
+          <Accordion.Item eventKey="2">
+            <Accordion.Header>Do you deliver and set up at the event location?</Accordion.Header>
+            <Accordion.Body style={{fontSize:'16px'}}>
+              Yes, we provide full delivery and setup services for all catering bookings.
+            </Accordion.Body>
+          </Accordion.Item>
+            </Accordion>
+        </h2>
     </Container>
     </Container>
+    <Footer />
     </>
   )
 }
