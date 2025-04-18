@@ -18,7 +18,7 @@ function Footer() {
               <li><a href="/" className="text-black text-decoration-none">About Us</a></li>
               <li><a href="/menu" className="text-black text-decoration-none">Our Menu</a></li>
               <li><a href="/catering" className="text-black text-decoration-none">Catering</a></li>
-              <li><a href="#pricing" className="text-black text-decoration-none">Contact</a></li>
+              <li><a href="/contact" className="text-black text-decoration-none">Contact</a></li>
             </ul>
           </Col>
           <Col md={4}>

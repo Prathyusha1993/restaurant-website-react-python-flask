@@ -48,3 +48,17 @@ html, body {
   font-size: 2.5rem;
   font-weight: bold;
 }
+
+.contact-us-banner {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 500px;
+  color:white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 50px 20px;
+}

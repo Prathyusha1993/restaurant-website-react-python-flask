@@ -16,7 +16,7 @@ function Aboutus() {
     "gallery-mutton-kadai.jpg",
     "gallery-nann.webp",
     "gallery-roti.webp",
-    "gallery-prawns-biryani.webp"
+    "gallery-prawns-biryani.webp",
   ];
 
   const chunkArray = (array, size) => {
@@ -30,7 +30,8 @@ function Aboutus() {
 
   return (
     <>
-      <Container className="p-0 w-100" style={{ marginTop: "10px" }}>
+      <div className="p-0 w-100" style={{ marginTop: "10px" }}>
+        {/* <Container className="p-0 w-100" style={{ marginTop: "10px" }}> */}
         {/* Hero Section */}
         <Row className="g-0 w-100">
           <Col className="p-0 w-100">
@@ -59,41 +60,43 @@ function Aboutus() {
         </Row>
 
         {/* Our Story */}
-        <Row className="align-items-center mb-5">
-          <Col md={6}>
-            <Image
-              src="/images/about-us-story.jpeg"
-              alt="about us story"
-              style={{ marginTop: "30px", width: "100%", objectFit: "cover" }}
-              fluid
-              rounded
-            />
-          </Col>
-          <Col md={6}>
-            <h2>Our Story</h2>
-            <p>
-              At Aha Biryani's, we blend tradition and innovation to bring you
-              the best of Biryani, Shawarma, and Tandoori delicacies. Our chefs
-              use fresh, locally sourced ingredients to craft dishes full of
-              flavor and warmth.
-            </p>
-            <p>
-              Aha Biryani's was born out of weekend gatherings where biryani
-              simmered slowly, shawarma was grilled to perfection, and laughter
-              filled the air. What started in a small home kitchen quickly grew
-              into a full-fledged dream when friends and neighbors insisted we
-              share our recipes with the world.
-            </p>
-            <p>
-              Every dish tells a story — from the hand-ground spices in our
-              biryani to the secret garlic sauce on our shawarma wraps. We
-              believe food isn’t just about taste — it’s about connection,
-              celebration, and culture. At SAha Biryani's, we invite you to pull
-              up a chair, savor every bite, and become part of our flavorful
-              story.
-            </p>
-          </Col>
-        </Row>
+        <Container>
+          <Row className="align-items-center mb-5">
+            <Col md={6}>
+              <Image
+                src="/images/about-us-story.jpeg"
+                alt="about us story"
+                style={{ marginTop: "30px", width: "100%", objectFit: "cover" }}
+                fluid
+                rounded
+              />
+            </Col>
+            <Col md={6}>
+              <h2>Our Story</h2>
+              <p>
+                At Aha Biryani's, we blend tradition and innovation to bring you
+                the best of Biryani, Shawarma, and Tandoori delicacies. Our
+                chefs use fresh, locally sourced ingredients to craft dishes
+                full of flavor and warmth.
+              </p>
+              <p>
+                Aha Biryani's was born out of weekend gatherings where biryani
+                simmered slowly, shawarma was grilled to perfection, and
+                laughter filled the air. What started in a small home kitchen
+                quickly grew into a full-fledged dream when friends and
+                neighbors insisted we share our recipes with the world.
+              </p>
+              <p>
+                Every dish tells a story — from the hand-ground spices in our
+                biryani to the secret garlic sauce on our shawarma wraps. We
+                believe food isn’t just about taste — it’s about connection,
+                celebration, and culture. At SAha Biryani's, we invite you to
+                pull up a chair, savor every bite, and become part of our
+                flavorful story.
+              </p>
+            </Col>
+          </Row>
+        </Container>
 
         {/* Meet Our Chef */}
         {/* <Row className="align-items-center">
@@ -113,7 +116,7 @@ function Aboutus() {
       </Row> */}
 
         {/* Gallery */}
-
+        <Container>
         <Row className="text-center">
           <Col>
             <h2 className="mb-4">Gallery</h2>
@@ -142,7 +145,9 @@ function Aboutus() {
             </Carousel.Item>
           ))}
         </Carousel>
-      </Container>
+        </Container>
+        {/* </Container> */}
+      </div>
       <Footer />
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Button, Row, Col, Container, Modal, Form } from 'react-bootstrap'
 import { BASE_URL } from '../App';
 
@@ -14,6 +14,7 @@ function ModalForm() {
         message:''
     })
     const [loading, setLoading] = useState(false)
+    const [errors, setErrors] = useState({})
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -21,10 +22,31 @@ function ModalForm() {
             ...prev,
             [name]: value
         }))
+        setErrors(prev => ({...prev, [name]: '' }));
     };
+
+    const validateForm = () => {
+        const newErrors = {};
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if(!inquireFormData.name.trim()) newErrors.name = 'Name is required';
+        if(!emailRegex.test(inquireFormData.email)) newErrors.email = 'Valid email is required';
+        if(!inquireFormData.phone.trim()) newErrors.phone = 'Phone number is required';
+        if(!inquireFormData.date) newErrors.date = 'Event Date is required';
+        if(!inquireFormData.time) newErrors.time = 'Event Time is required';
+        if(!inquireFormData.number_of_guests || inquireFormData.number_of_guests < 1) newErrors.number_of_guests = 'Number of guests is required';
+        if(!inquireFormData.message.trim()) newErrors.message = 'Message is required';
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const isValid = validateForm();
+        if(!isValid) return;
+
         setLoading(true);
         try {
             const response = await fetch(BASE_URL + 'inquire', {
@@ -41,6 +63,7 @@ function ModalForm() {
             const data = await response.json();
             setInquireFormData(data)
             alert('Your form has been submitted successfully!');
+            setInquireFormData({name:'', email:'', phone:'', date:'', time:'', number_of_guests:'', message:''});
             setShowModal(false);
         }
         catch(error){
@@ -76,7 +99,7 @@ function ModalForm() {
                     <Modal.Title>Book Catering</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={handleSubmit}>
+                    <Form noValidate onSubmit={handleSubmit}>
                         <Form.Group className='mb-3' controlId='formName'>
                             <Form.Label>Name:</Form.Label>
                             <Form.Control 
@@ -84,7 +107,9 @@ function ModalForm() {
                             placeholder='Enter your name'
                             name='name'
                             value={inquireFormData.name}
-                            onChange={handleChange} />
+                            onChange={handleChange}
+                            isInvalid={!!errors.name} />
+                            <Form.Control.Feedback type='invalid'>{errors.name}</Form.Control.Feedback>
                         </Form.Group>
 
                         <Form.Group className='mb-3' controlId='formEmail'>
@@ -94,7 +119,9 @@ function ModalForm() {
                             placeholder='Enter email'
                             name='email'
                             value={inquireFormData.email}
-                            onChange={handleChange} />
+                            onChange={handleChange}
+                            isInvalid={!!errors.email} />
+                            <Form.Control.Feedback type='invalid'>{errors.email}</Form.Control.Feedback>
                         </Form.Group>
 
                         <Form.Group className='mb-3' controlId='formPhone'>
@@ -104,7 +131,9 @@ function ModalForm() {
                             placeholder='Phone Number'
                             name = 'phone'
                             value={inquireFormData.phone}
-                            onChange={handleChange} />
+                            onChange={handleChange}
+                            isInvalid={!!errors.phone} />
+                            <Form.Control.Feedback type='invalid'>{errors.phone}</Form.Control.Feedback>
                         </Form.Group>
 
                         <Form.Group className='mb-3' controlId='formDate'>
@@ -113,7 +142,9 @@ function ModalForm() {
                             type='date'
                             name='date'
                             value={inquireFormData.date}
-                            onChange={handleChange} />
+                            onChange={handleChange}
+                            isInvalid={!!errors.date} />
+                            <Form.Control.Feedback type='invalid'>{errors.date}</Form.Control.Feedback>
                         </Form.Group>
 
                         <Form.Group className='mb-3' controlId='formTime'>
@@ -122,7 +153,9 @@ function ModalForm() {
                             type='time'
                             name='time'
                             value={inquireFormData.time}
-                            onChange={handleChange} />
+                            onChange={handleChange}
+                            isInvalid={!!errors.time} />
+                            <Form.Control.Feedback type='invalid'>{errors.time}</Form.Control.Feedback>
                         </Form.Group>
 
                         <Form.Group className='mb-3' controlId='formGuests'>
@@ -131,7 +164,9 @@ function ModalForm() {
                             type='number' min='1'
                             name='number_of_guests'
                             value={inquireFormData.number_of_guests}
-                            onChange={handleChange} />
+                            onChange={handleChange}
+                            isInvalid={!!errors.number_of_guests} />
+                            <Form.Control.Feedback type='invalid'>{errors.number_of_guests}</Form.Control.Feedback>
                         </Form.Group>
 
                         <Form.Group className='mb-3' controlId='formMessage'>
@@ -139,7 +174,9 @@ function ModalForm() {
                             <Form.Control as='textarea' rows={3}
                             name='message'
                             value={inquireFormData.message}
-                            onChange={handleChange} />
+                            onChange={handleChange} 
+                            isInvalid={!!errors.message}/>
+                            <Form.Control.Feedback type='invalid'>{errors.message}</Form.Control.Feedback>
                         </Form.Group>
 
                         <Button variant='primary' type='submit' disabled={loading}>{loading ? 'Submitting...': 'Submit'}</Button>

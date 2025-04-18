@@ -5,6 +5,7 @@ import './App.css'
 import { BrowserRouter, Route, Routes } from "react-router";
 import Menu from './components/Menu';
 import Catering from './components/Catering';
+import ContactForm from './components/ContactForm';
 
 export const BASE_URL = 'http://127.0.0.1:5000/'
 
@@ -19,6 +20,7 @@ function App() {
           <Route index element={<Aboutus />} />
           <Route path='/menu' element={<Menu />} />
           <Route path='/catering' element={<Catering />} />
+          <Route path='/contact' element={<ContactForm />} />
         </Routes>
       </BrowserRouter>
     </>
