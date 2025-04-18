@@ -1,8 +1,8 @@
 from main import app, db
 from flask import jsonify, request
-from models import MenuItem, InquireForm
+from models import MenuItem, InquireForm, ContactForm
 from pdf_generator import generate_menu_pdf
-import smtplib
+import smtplib, textwrap
 import os
 from dotenv import load_dotenv
 
@@ -157,3 +157,44 @@ def inquire_form():
         db.session.rollback()
         print(f'error in inquire form: {e}')
         return jsonify({'error': str(e)}), 500
+    
+
+@app.route('/contact', methods=['POST'])
+def create_contact_form():
+    try:
+        data = request.json
+        required_fields = ['name', 'email', 'phone', 'message']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'error': f'{field.capitalize()} is required.'}), 400
+        
+        name = data.get('name')
+        email = data.get('email')
+        phone = data.get('phone')
+        message = data.get('message')
+
+        new_form = ContactForm(name=name, email=email, phone=phone, message=message)
+        db.session.add(new_form)
+        db.session.commit()
+
+        # Send email notification
+        with smtplib.SMTP('smtp.gmail.com', port=587) as connection:
+            connection.starttls()
+            connection.login(user=MY_EMAIL, password=MY_PASSWORD)
+            msg = textwrap.dedent(f"""\
+            Subject: New Contact Form Submission
+
+            New contact form submission:
+
+            Name: {name}
+            Email: {email}
+            Phone: {phone}
+            Message: {message}
+            """)
+            connection.sendmail(from_addr=email, to_addrs=MY_EMAIL, msg=msg)
+
+        return jsonify({'message': 'Contact Form submitted successfully!'}), 201
+    except Exception as e:
+        db.session.rollback()
+        print(f'error in contact form: {e}')
+        return jsonify({'error': 'An internal error occurred. Please try again later.'}), 500
