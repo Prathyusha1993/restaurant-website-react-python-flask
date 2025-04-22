@@ -24,9 +24,19 @@ function Menu() {
   const [showOrderModal, setShowOrderModal] = useState(false);
 
   const getFilteredMenu = () => {
-    if (selectedCategory === "All") return menuData;
-    return { [selectedCategory]: menuData[selectedCategory] };
-  };
+    // if (selectedCategory === "All") return menuData;
+    // return { [selectedCategory]: menuData[selectedCategory] };
+    if(!Array.isArray(menuData)) return {};
+    let filtered = selectedCategory === 'All' ? menuData : menuData.filter((item) => item.category.toLowerCase() === selectedCategory.toLowerCase())  
+
+    const grouped = filtered.reduce((acc, item) => {
+      const category = item.category;
+      if(!acc[category]) acc[category] = [];
+      acc[category].push(item);
+      return acc;
+    }, {});
+    return grouped;
+    };
 
   const groupByCategory = (items) => {
     return items.reduce((acc, item) => {
@@ -48,8 +58,7 @@ function Menu() {
         if (!res.ok) {
           throw new Error(data.error || "Somethig went wrong");
         }
-        const groupedData = groupByCategory(data);
-        setMenuData(groupedData);
+        setMenuData(data);
       } catch (err) {
         console.log(err);
       } finally {
@@ -58,6 +67,9 @@ function Menu() {
     };
     getMenu();
   }, []);
+
+  if (loading) return <p className="text-center my-5">Loading Menu...</p>
+  if(!menuData.length) return <p className="text-center my-5">No menu items found.</p>
 
   return (
     <>
@@ -85,12 +97,13 @@ function Menu() {
           <ButtonGroup>
             {[
               "All",
-              "Starters",
-              "Tandooris",
-              "Biryanis",
-              "Shawarmas",
-              "Breads",
-              "Desserts",
+              "soups & salads",
+              "starters",
+              "tandooris",
+              "biryanis",
+              "shawarmas",
+              "breads",
+              "desserts",
             ].map((category, index) => (
               <Button
                 key={index}
@@ -106,25 +119,25 @@ function Menu() {
           </ButtonGroup>
         </div>
 
-        <Accordion defaultActiveKey={['0', '1', '2', '3', '4', '5']}>
+        <Accordion defaultActiveKey={['0', '1', '2', '3', '4', '5', '6']}>
           {Object.entries(getFilteredMenu()).map(([category, items], index) => (
             <Accordion.Item eventKey={index.toString()} key={category}>
               <Accordion.Header>{category}</Accordion.Header>
-              <Accordion.Body>
+              <Accordion.Body >
                 <Row>
                   {items.map((item, idx) => (
-                    <Col md={6} className="mb-4" key={idx}>
+                    <Col md={4} className="mb-4" key={idx}>
                       <div className="d-flex">
                         <Image
                           src={item.imgUrl}
-                          width={80}
-                          height={80}
+                          width={50}
+                          height={50}
                           className="me-3 rounded"
                           alt={item.name}
                           style={{ objectFit: "cover" }}
                         />
                         <div>
-                          <h5 className="mb-1">
+                          <h5 className="mb-1" style={{fontSize:'15px'}}>
                             {item.name}{" "}
                             {item.veg !== null &&
                               (item.veg ? (
@@ -160,11 +173,12 @@ function Menu() {
                               </Badge>
                             )}
                           </h5>
-                          <p className="mb-2">{item.price}</p>
+                          <p className="mb-2" style={{fontSize:'13px'}}>{item.price}</p>
                           <Button
                             size="sm"
                             variant="outline-primary"
                             onClick={() => setShowOrderModal(true)}
+                            style={{fontSize:'12px'}}
                           >
                             Order Now
                           </Button>
