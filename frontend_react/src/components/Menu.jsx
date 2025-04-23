@@ -23,6 +23,18 @@ function Menu() {
   const [loading, setLoading] = useState(true);
   const [showOrderModal, setShowOrderModal] = useState(false);
 
+  const categoryOrderDisplay = [
+    "biryanis",
+    "soups & salads",
+    "starters",
+    "tandooris",
+    "main course",
+    "breads",
+    "rice & noodles",
+    "shawarmas",
+    "accompaniments",
+  ]
+
   const getFilteredMenu = () => {
     // if (selectedCategory === "All") return menuData;
     // return { [selectedCategory]: menuData[selectedCategory] };
@@ -101,9 +113,11 @@ function Menu() {
               "starters",
               "tandooris",
               "biryanis",
-              "shawarmas",
+              "main course",
               "breads",
-              "desserts",
+              "rice & noodles",
+              "shawarmas",
+              "accompaniments"
             ].map((category, index) => (
               <Button
                 key={index}
@@ -119,9 +133,12 @@ function Menu() {
           </ButtonGroup>
         </div>
 
-        <Accordion defaultActiveKey={['0', '1', '2', '3', '4', '5', '6']}>
-          {Object.entries(getFilteredMenu()).map(([category, items], index) => (
-            <Accordion.Item eventKey={index.toString()} key={category}>
+        <Accordion defaultActiveKey={['0', '1', '2', '3', '4', '5', '6','7', '8']}>
+          {/* {Object.entries(getFilteredMenu()).map(([category, items], index) => ( */}
+          {categoryOrderDisplay.filter((category) => getFilteredMenu()[category]).map((category, index) => {
+            const items = getFilteredMenu()[category];
+            return (
+              <Accordion.Item eventKey={index.toString()} key={category}>
               <Accordion.Header>{category}</Accordion.Header>
               <Accordion.Body >
                 <Row>
@@ -212,7 +229,8 @@ function Menu() {
                 </Row>
               </Accordion.Body>
             </Accordion.Item>
-          ))}
+            )
+          })}
         </Accordion>
         <div className="text-center mt-5">
           <a
