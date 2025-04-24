@@ -1,6 +1,6 @@
 from main import app, db
 from flask import jsonify, request
-from models import MenuItem, InquireForm, ContactForm
+from models import MenuItem, InquireForm, ContactForm, LoginForm
 from pdf_generator import generate_menu_pdf
 import smtplib, textwrap
 import os
@@ -198,3 +198,19 @@ def create_contact_form():
         db.session.rollback()
         print(f'error in contact form: {e}')
         return jsonify({'error': 'An internal error occurred. Please try again later.'}), 500
+    
+
+@app.route('/admin-login', methods=['POST'])
+def admin_login():
+    try:
+        data = request.json
+        username = data.get('username')
+        password = data.get('password')
+        if not username or not password:
+            return jsonify({'error': 'Email and password are required.'}), 400
+        
+        
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+        
