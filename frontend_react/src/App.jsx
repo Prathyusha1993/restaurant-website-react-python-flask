@@ -15,8 +15,9 @@ function App() {
   return (
     <>
       {/* <h1>Building Restaurant website</h1> */}
-      <Header />
+      
       <BrowserRouter>
+      <Header />
         <Routes>
           <Route index element={<Aboutus />} />
           <Route path='/admin-login' element={<AdminLogin />} />

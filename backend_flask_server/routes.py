@@ -1,6 +1,6 @@
 from main import app, db
 from flask import jsonify, request
-from models import MenuItem, InquireForm, ContactForm, LoginForm
+from models import MenuItem, InquireForm, ContactForm
 from pdf_generator import generate_menu_pdf
 import smtplib, textwrap
 import os
@@ -10,6 +10,8 @@ load_dotenv()
 # Load environment variables
 MY_EMAIL = os.getenv('MY_EMAIL')
 MY_PASSWORD = os.getenv('MY_PASSWORD')
+ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
 
 @app.route('/menu', methods=['GET'])
 def get_menu():
@@ -203,14 +205,11 @@ def create_contact_form():
 @app.route('/admin-login', methods=['POST'])
 def admin_login():
     try:
-        data = request.json
-        username = data.get('username')
-        password = data.get('password')
-        if not username or not password:
-            return jsonify({'error': 'Email and password are required.'}), 400
-        
-        
-        
+        data = request.get_json()
+        if data['username'] == ADMIN_USERNAME and data['password'] == ADMIN_PASSWORD:
+            return jsonify({'message': 'Login successful', 'isAdmin': True}), 200
+        else:
+            return jsonify({'message': 'Invalid credentials'}), 401
     except Exception as e:
         return jsonify({'error': str(e)}), 500
         
