@@ -15,6 +15,7 @@ import { FaPepperHot } from "react-icons/fa";
 import Footer from "./Footer";
 import { BASE_URL } from "../App";
 import { SiZomato } from "react-icons/si";
+import AddMenu from "./AddMenu";
 
 
 function Menu() {
@@ -133,9 +134,7 @@ function Menu() {
           </ButtonGroup>
         </div>
 
-        {/* <div>
-          <Button>Add New Menu</Button>
-        </div> */}
+        <AddMenu />
 
         <Accordion defaultActiveKey={['0', '1', '2', '3', '4', '5', '6','7', '8']}>
           {/* {Object.entries(getFilteredMenu()).map(([category, items], index) => ( */}
