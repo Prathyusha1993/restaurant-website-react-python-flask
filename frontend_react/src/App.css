@@ -68,3 +68,7 @@ html, body {
   backdrop-filter: blur(8px); /* this creates the blur */
   -webkit-backdrop-filter: blur(5px); /* Safari support */
 }
+
+.edit-delete-buttons {
+  border: none
+}
