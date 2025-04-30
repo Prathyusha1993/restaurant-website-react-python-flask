@@ -3,11 +3,27 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import os
+from werkzeug.utils import secure_filename
 
 
 app = Flask(__name__)
 CORS(app)
 
+UPLOAD_FOLDER = os.path.join('static', 'uploads')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///restaurants.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -35,3 +51,4 @@ with app.app_context():
 
 if __name__ == '__main__':
     app.run(debug=True)
+

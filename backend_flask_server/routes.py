@@ -1,10 +1,13 @@
-from main import app, db
+from main import app, db, allowed_file
 from flask import jsonify, request
 from models import MenuItem, InquireForm, ContactForm
 from pdf_generator import generate_menu_pdf
 import smtplib, textwrap
 import os
 from dotenv import load_dotenv
+from werkzeug.utils import secure_filename
+import traceback
+
 
 load_dotenv()
 # Load environment variables
@@ -13,6 +16,8 @@ MY_PASSWORD = os.getenv('MY_PASSWORD')
 ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
 
+
+
 @app.route('/menu', methods=['GET'])
 def get_menu():
     menu_items = MenuItem.query.all()
@@ -20,30 +25,75 @@ def get_menu():
 
 @app.route('/menu', methods=['POST'])
 def add_menu_item():
-    try:
-        data = request.json
-        required_fields = ['name', 'price', 'description', 'veg', 'spicy', 'img_url', 'category']
-        for field in required_fields:
-            if field not in data:
-                return jsonify({'error': f'Missing field: {field}'}), 400
+    # try:
+    #     data = request.json
+    #     required_fields = ['name', 'price', 'description', 'veg', 'spicy', 'img_url', 'category']
+    #     for field in required_fields:
+    #         if field not in data:
+    #             return jsonify({'error': f'Missing field: {field}'}), 400
         
-        name = data.get('name')
-        price = data.get('price')
-        description = data.get('description')
-        veg = data.get('veg')
-        spicy = data.get('spicy')
-        img_url = data.get('img_url')
-        category = data.get('category')
-        new_item = MenuItem(name=name, price=price, description=description, veg=veg, spicy=spicy, img_url=img_url, category=category)
+    #     name = data.get('name')
+    #     price = data.get('price')
+    #     description = data.get('description')
+    #     veg = data.get('veg')
+    #     spicy = data.get('spicy')
+    #     img_url = data.get('img_url')
+    #     category = data.get('category')
+    #     new_item = MenuItem(name=name, price=price, description=description, veg=veg, spicy=spicy, img_url=img_url, category=category)
+    #     db.session.add(new_item)
+    #     db.session.commit()
+
+    #     generate_menu_pdf()  # Call the PDF generation function after adding the item
+
+    #     return jsonify(new_item.to_json()), 201
+    # except Exception as e:
+    #     db.session.rollback()
+    #     return jsonify({'error': str(e)}), 500
+    
+    try:
+        if 'img_url' not in request.files:
+            return jsonify({'error': 'No file part in the request'}), 400
+        
+        image = request.files['img_url']
+        if image.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+        
+        if not allowed_file(image.filename):
+            return jsonify({'error': 'File type not allowed'}), 400
+        
+        filename = secure_filename(image.filename)
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        image.save(image_path)
+
+        name = request.form.get('name')
+        price = float(request.form.get('price'))
+        veg = request.form.get('veg') in ['1', 'true', 'True']
+        spicy = request.form.get('spicy') in ['1', 'true', 'True']
+        description = request.form.get('description')
+        category = request.form.get('category')
+        # img_url = f'/static/uploads/{filename}'
+
+        if not all([name, price, description, category]):
+            return jsonify({'error': 'Missing required fields'}), 400
+        
+        new_item = MenuItem(
+            name=name,
+            price=price,
+            veg=veg,
+            spicy=spicy,
+            img_url=filename,
+            description=description,
+            category=category
+        )
         db.session.add(new_item)
         db.session.commit()
 
-        generate_menu_pdf()  # Call the PDF generation function after adding the item
-
+        generate_menu_pdf()
         return jsonify(new_item.to_json()), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
     
 
 @app.route('/menu/category/<string:category>', methods=['GET'])
@@ -62,19 +112,47 @@ def get_menu_item_id(id):
 
 @app.route('/menu/<int:id>', methods=['PATCH'])
 def update_menu_item(id):
+    # try:
+    #     item = MenuItem.query.get_or_404(id)
+    #     if item is None:
+    #         return jsonify({'error': 'Item not found.'}), 404
+        
+    #     data = request.json
+    #     item.name = data.get('name', item.name)
+    #     item.price = data.get('price', item.price)
+    #     item.description = data.get('description', item.description)
+    #     item.veg = data.get('veg', item.veg)
+    #     item.spicy = data.get('spicy', item.spicy)
+    #     item.img_url = data.get('imgUrl', item.img_url)
+    #     item.category = data.get('category', item.category)
+    #     db.session.commit()
+
+    #     generate_menu_pdf()
+
+    #     return jsonify(item.to_json()), 200
+    # except Exception as e:
+    #     db.session.rollback()
+    #     return jsonify({'error': str(e)}), 500
     try:
         item = MenuItem.query.get_or_404(id)
-        if item is None:
-            return jsonify({'error': 'Item not found.'}), 404
-        
-        data = request.json
-        item.name = data.get('name', item.name)
-        item.price = data.get('price', item.price)
-        item.description = data.get('description', item.description)
-        item.veg = data.get('veg', item.veg)
-        item.spicy = data.get('spicy', item.spicy)
-        item.img_url = data.get('imgUrl', item.img_url)
-        item.category = data.get('category', item.category)
+
+        # Use request.form instead of request.json
+        item.name = request.form.get('name', item.name)
+        item.price = float(request.form.get('price', item.price))
+        item.description = request.form.get('description', item.description)
+        item.veg = bool(int(request.form.get('veg'))) if 'veg' in request.form else item.veg
+        item.spicy = bool(int(request.form.get('spicy'))) if 'spicy' in request.form else item.spicy
+        item.category = request.form.get('category', item.category)
+
+        # Handle image upload conditionally
+        if 'img_url' in request.files:
+            file = request.files['img_url']
+            if file.filename != '':
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(filepath)
+                item.img_url = filepath
+
         db.session.commit()
 
         generate_menu_pdf()
@@ -82,6 +160,7 @@ def update_menu_item(id):
         return jsonify(item.to_json()), 200
     except Exception as e:
         db.session.rollback()
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
     
 
@@ -152,7 +231,6 @@ def inquire_form():
             Message: {message}
             """
             connection.sendmail(from_addr=email, to_addrs=MY_EMAIL, msg=msg)
-            connection.close()
 
         return jsonify({'message': 'Inquiry Form submitted successfully!'}), 201
     except Exception as e:
@@ -213,3 +291,4 @@ def admin_login():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
         
+

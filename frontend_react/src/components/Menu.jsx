@@ -61,16 +61,6 @@ function Menu() {
     return grouped;
   };
 
-  const groupByCategory = (items) => {
-    return items.reduce((acc, item) => {
-      const category =
-        item.category.charAt(0).toUpperCase() + item.category.slice(1);
-      if (!acc[category]) acc[category] = [];
-      acc[category].push(item);
-      return acc;
-    }, {});
-  };
-
   const getMenuItems = async () => {
     try {
       const res = await fetch(BASE_URL + "menu");
@@ -91,6 +81,23 @@ function Menu() {
   useEffect(() => {
     getMenuItems();
   }, []);
+
+  const handleDeleteMenuItem = async (id) => {
+    try {
+      const response = await fetch(BASE_URL+  `menu/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete menu item');
+      }
+      alert('Are you sure you want to delete this menu item?');
+      const data = await response.json();
+      alert(`Menu Item deleted successfully:\n${JSON.stringify(data)}`);
+      setMenuData(prevItems => prevItems.filter(item => item.id !== id));
+    } catch(error) {
+      console.error('Error deleting menu item:', error);
+    } 
+  }
 
   if (loading) return <p className="text-center my-5">Loading Menu...</p>;
   if (!menuData.length)
@@ -147,29 +154,31 @@ function Menu() {
         </div>
 
         <Container className="mb-5 text-center d-flex flex-column justify-content-center">
-        <Row>
-          <Col>
-          {isAdmin && (
-          <Button
-          className="mb-3"
-          onClick={() => {
-            setEditingItem(null);
-            setShowAddEditModal(true);
-          }}>
-          Add Menu item
-        </Button>
-        )}
-          </Col>
-        </Row>
-      </Container>
+          <Row>
+            <Col>
+              {isAdmin && (
+                <Button
+                  className="mb-3"
+                  onClick={() => {
+                    setEditingItem(null);
+                    setShowAddEditModal(true);
+                  }}
+                >
+                  Add Menu item
+                </Button>
+              )}
+            </Col>
+          </Row>
+        </Container>
         {showAddEditModal && (
-          <AddMenu 
-            mode = {editingItem ? 'edit' : 'add'}
-            existingItem = {editingItem}
-            onClose={() => setShowAddEditModal(false)}
-            onMenuUpdated={getMenuItems} />
+          <AddMenu
+            show = {showAddEditModal}
+            onHide = {() => setShowAddEditModal(false)}
+            mode={editingItem ? "edit" : "add"}
+            existingData={editingItem}
+            onMenuUpdated={getMenuItems}
+          />
         )}
-        
 
         <Accordion
           defaultActiveKey={["0", "1", "2", "3", "4", "5", "6", "7", "8"]}
@@ -188,7 +197,8 @@ function Menu() {
                         <Col md={4} className="mb-4" key={idx}>
                           <div className="d-flex">
                             <Image
-                              src={item.imgUrl}
+                              // src={item.imgUrl}
+                              src={item.imgUrl ? `${BASE_URL}${item.imgUrl}` : '/placeholder.jpg'}
                               width={50}
                               height={50}
                               className="me-3 rounded"
@@ -245,75 +255,82 @@ function Menu() {
                               </Button>
                               {isAdmin && (
                                 <div>
-                                <Button
-                                style={{ border: "none", marginLeft: "8px" }}
-                                size="sm"
-                                variant="outline-primary"
-                                onClick={() => {
-                                  setEditingItem(item);
-                                  setShowAddEditModal(true);
-                                }}
-                              >
-                                <FaEdit style={{ color: "black" }} />
-                              </Button>
-                              <Button
-                                style={{ border: "none", marginLeft: "8px" }}
-                                size="sm"
-                                variant="outline-primary"
-                              >
-                                <MdDeleteForever style={{ color: "red" }} />
-                              </Button>
+                                  <Button
+                                    style={{
+                                      border: "none",
+                                      marginLeft: "8px",
+                                    }}
+                                    size="sm"
+                                    variant="outline-primary"
+                                    onClick={() => {
+                                      setEditingItem(item);
+                                      setShowAddEditModal(true);
+                                    }}
+                                  >
+                                    <FaEdit style={{ color: "black" }} />
+                                  </Button>
+                                  <Button
+                                    style={{
+                                      border: "none",
+                                      marginLeft: "8px",
+                                    }}
+                                    size="sm"
+                                    variant="outline-primary"
+                                    onClick={() => handleDeleteMenuItem(item.id)}
+                                  >
+                                    <MdDeleteForever style={{ color: "red" }} />
+                                  </Button>
                                 </div>
                               )}
-                              
-                              <Modal
-                                show={showOrderModal}
-                                backdrop="true"
-                                className="modal-backdrop.show"
-                                onHide={() => setShowOrderModal(false)}
-                                centered
-                              >
-                                <Modal.Header closeButton>
-                                  <Modal.Title>Continue With</Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body className="text-center">
-                                  <Button
-                                    variant="outline-primary"
-                                    style={{
-                                      outline: "none",
-                                      boxShadow: "none",
-                                      border: "none",
-                                      padding: 0,
-                                      backgroundColor: "transparent",
-                                    }}
-                                    className="m-2"
-                                    href="https://www.zomato.com/bangalore/aha-biriyani-btm-bangalore/order"
-                                    target="_blank"
-                                  >
-                                    <SiZomato
-                                      size={70}
-                                      style={{
-                                        backgroundColor: "red",
-                                        color: "white",
-                                        borderRadius: "10px",
-                                        padding: "5px",
-                                      }}
-                                    />
-                                  </Button>
+                            </div>
+                          </div>
+                        </Col>
+                      ))}
 
-                                  {/* <Button 
+                      <Modal
+                        show={showOrderModal}
+                        backdrop="true"
+                        className="modal-backdrop.show"
+                        onHide={() => setShowOrderModal(false)}
+                        centered
+                      >
+                        <Modal.Header closeButton>
+                          <Modal.Title>Continue With</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body className="text-center">
+                          <Button
+                            variant="outline-primary"
+                            style={{
+                              outline: "none",
+                              boxShadow: "none",
+                              border: "none",
+                              padding: 0,
+                              backgroundColor: "transparent",
+                            }}
+                            className="m-2"
+                            href="https://www.zomato.com/bangalore/aha-biriyani-btm-bangalore/order"
+                            target="_blank"
+                          >
+                            <SiZomato
+                              size={70}
+                              style={{
+                                backgroundColor: "red",
+                                color: "white",
+                                borderRadius: "10px",
+                                padding: "5px",
+                              }}
+                            />
+                          </Button>
+
+                          {/* <Button 
                                 variant="outline-primary"
                                 className="m-2"
                                 href="https://www.zomato.com/bangalore/aha-biriyani-btm-bangalore/order"
                                 target="_blank">
                                   <SiZomato style={{backgroundColor:'red', color:'white'}} />
                                 </Button> */}
-                                </Modal.Body>
-                              </Modal>
-                            </div>
-                          </div>
-                        </Col>
-                      ))}
+                        </Modal.Body>
+                      </Modal>
                     </Row>
                   </Accordion.Body>
                 </Accordion.Item>

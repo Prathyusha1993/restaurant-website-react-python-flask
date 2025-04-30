@@ -11,13 +11,19 @@ class MenuItem(db.Model):
     category = db.Column(db.String(50), nullable=False)
 
     def to_json(self):
+        if self.img_url.startswith('http://') or self.img_url.startswith('https://'):
+            img_url = self.img_url  # already a full URL
+        else:
+            img_url = f"/static/uploads/{self.img_url.lstrip()}"  # ensure no leading slash
+
         return {
             'id': self.id,
             'name': self.name,
             'price': self.price,
             'veg': self.veg,
             'spicy': self.spicy,
-            'imgUrl': self.img_url,
+            'imgUrl': img_url,
+            # 'imgUrl': f"/static/uploads/{self.img_url}",
             'description': self.description,
             'category': self.category
         }
