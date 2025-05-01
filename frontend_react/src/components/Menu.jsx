@@ -197,8 +197,8 @@ function Menu() {
                         <Col md={4} className="mb-4" key={idx}>
                           <div className="d-flex">
                             <Image
-                              // src={item.imgUrl}
-                              src={item.imgUrl ? `${BASE_URL}${item.imgUrl}` : '/placeholder.jpg'}
+                              src={item.imgUrl || '/images/placeholder.jpg'}
+                              // src={item.imgUrl ? `${BASE_URL}${item.imgUrl}` : '/placeholder.jpg'}
                               width={50}
                               height={50}
                               className="me-3 rounded"

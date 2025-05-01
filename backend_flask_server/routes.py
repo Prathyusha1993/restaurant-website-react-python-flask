@@ -151,7 +151,7 @@ def update_menu_item(id):
                 filename = secure_filename(file.filename)
                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(filepath)
-                item.img_url = filepath
+                item.img_url = filename
 
         db.session.commit()
 
