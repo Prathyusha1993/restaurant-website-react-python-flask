@@ -15,7 +15,8 @@ MY_EMAIL = os.getenv('MY_EMAIL')
 MY_PASSWORD = os.getenv('MY_PASSWORD')
 ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
-
+print(f'email: {MY_EMAIL}')
+print(f'password: {MY_PASSWORD}')
 
 
 @app.route('/api/menu', methods=['GET'])
