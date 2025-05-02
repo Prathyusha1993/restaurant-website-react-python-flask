@@ -60,6 +60,11 @@ def serve_images(filename):
 # api routes
 import routes
 
+# Catch-all route to serve index.html for SPA client-side routing
+@app.route('/<path:path>')
+def catch_all(path):
+    return send_from_directory(dist_folder, 'index.html')
+
 with app.app_context():
     # Create the database and tables if they don't exist
     db.create_all()
