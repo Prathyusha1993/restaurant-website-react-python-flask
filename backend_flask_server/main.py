@@ -22,7 +22,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/static/uploads/<filename>')
+@app.route('/api/static/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
@@ -36,12 +36,26 @@ frontend_folder = os.path.join(os.getcwd(), '..', 'frontend_react')
 dist_folder = os.path.join(frontend_folder, 'dist')
 
 # serve static files from dist folder under frontend_react directory
-@app.route('/', defaults={'filename':''})
-@app.route('/<path:filename>')
-def index(filename):
-    if not filename:
-        filename = 'index.html'
-    return send_from_directory(dist_folder, filename)
+# @app.route('/', defaults={'filename':''})
+# @app.route('/<path:filename>')
+# def index(filename):
+#     if not filename:
+#         filename = 'index.html'
+#     return send_from_directory(dist_folder, filename)
+
+@app.route('/')
+def index():
+    return send_from_directory(dist_folder, 'index.html')
+
+# Serve assets from the 'dist/assets' directory
+@app.route('/assets/<path:filename>')
+def serve_assets(filename):
+    return send_from_directory(os.path.join(dist_folder, 'assets'), filename)
+
+# Serve images from the 'dist/images' directory
+@app.route('/images/<path:filename>')
+def serve_images(filename):
+    return send_from_directory(os.path.join(dist_folder, 'images'), filename)
 
 # api routes
 import routes

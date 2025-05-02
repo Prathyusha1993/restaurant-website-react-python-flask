@@ -18,12 +18,12 @@ ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
 
 
 
-@app.route('/menu', methods=['GET'])
+@app.route('/api/menu', methods=['GET'])
 def get_menu():
     menu_items = MenuItem.query.all()
     return jsonify([item.to_json() for item in menu_items])
 
-@app.route('/menu', methods=['POST'])
+@app.route('/api/menu', methods=['POST'])
 def add_menu_item():
     # try:
     #     data = request.json
@@ -96,13 +96,13 @@ def add_menu_item():
 
     
 
-@app.route('/menu/category/<string:category>', methods=['GET'])
+@app.route('/api/menu/category/<string:category>', methods=['GET'])
 def get_menu_by_category(category):
     menu_items = MenuItem.query.filter_by(category=category).all()
     return jsonify([item.to_json() for item in menu_items])
 
 
-@app.route('/menu/<int:id>', methods=['GET'])
+@app.route('/api/menu/<int:id>', methods=['GET'])
 def get_menu_item_id(id):
     item = MenuItem.query.get_or_404(id)
     if item is None:
@@ -110,7 +110,7 @@ def get_menu_item_id(id):
     return jsonify({'id': item.id, 'name': item.name, 'price': item.price, 'description': item.description, 'veg': item.veg, 'spicy':item.spicy, 'img_url':item.img_url, 'category': item.category})
 
 
-@app.route('/menu/<int:id>', methods=['PATCH'])
+@app.route('/api/menu/<int:id>', methods=['PATCH'])
 def update_menu_item(id):
     # try:
     #     item = MenuItem.query.get_or_404(id)
@@ -167,7 +167,7 @@ def update_menu_item(id):
         return jsonify({'error': str(e)}), 500
     
 
-@app.route('/menu/<int:id>', methods=['DELETE'])
+@app.route('/api/menu/<int:id>', methods=['DELETE'])
 def delete_menu_item(id):
     try:
         item = MenuItem.query.get_or_404(id)
@@ -181,7 +181,7 @@ def delete_menu_item(id):
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
     
-@app.route('/menu/search', methods=['GET'])
+@app.route('/api/menu/search', methods=['GET'])
 def search_menu_items():
     query = request.args.get('q', '')    #get the searchquery from query parameter
     if not query:
@@ -191,12 +191,12 @@ def search_menu_items():
     return jsonify([item.to_json() for item in menu_items])
 
 
-@app.route('/generate-pdf')
+@app.route('/api/generate-pdf')
 def generate_pdf_route():
     generate_menu_pdf()
     return jsonify({'message': 'PDF generated successfully'}), 200
 
-@app.route('/inquire', methods=['POST'])
+@app.route('/api/inquire', methods=['POST'])
 def inquire_form():
     try:
         data = request.json
@@ -242,7 +242,7 @@ def inquire_form():
         return jsonify({'error': str(e)}), 500
     
 
-@app.route('/contact', methods=['POST'])
+@app.route('/api/contact', methods=['POST'])
 def create_contact_form():
     try:
         data = request.json
@@ -283,7 +283,7 @@ def create_contact_form():
         return jsonify({'error': 'An internal error occurred. Please try again later.'}), 500
     
 
-@app.route('/admin-login', methods=['POST'])
+@app.route('/api/admin-login', methods=['POST'])
 def admin_login():
     try:
         data = request.get_json()

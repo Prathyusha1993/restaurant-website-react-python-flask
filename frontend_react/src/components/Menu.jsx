@@ -208,7 +208,7 @@ function Menu() {
                               //   : `${BASE_URL}${item.img_url}`}
                               src={item.img_url.startsWith('http')
                                 ? item.img_url
-                                : `${BASE_URL}/static/uploads/${item.img_url}`}
+                                : `${BASE_URL.slice(0, -1)}/static/uploads/${item.img_url}`}
                               width={50}
                               height={50}
                               className="me-3 rounded"

@@ -8,7 +8,7 @@ import Catering from './components/Catering';
 import ContactForm from './components/ContactForm';
 import AdminLogin from './components/AdminLogin';
 
-export const BASE_URL = 'http://127.0.0.1:5000/'
+export const BASE_URL = 'http://127.0.0.1:5000/api/'
 
 function App() {
 
