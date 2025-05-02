@@ -32,16 +32,16 @@ def add_menu_item():
     #         if field not in data:
     #             return jsonify({'error': f'Missing field: {field}'}), 400
         
-    #     name = data.get('name')
-    #     price = data.get('price')
-    #     description = data.get('description')
-    #     veg = data.get('veg')
-    #     spicy = data.get('spicy')
-    #     img_url = data.get('img_url')
-    #     category = data.get('category')
-    #     new_item = MenuItem(name=name, price=price, description=description, veg=veg, spicy=spicy, img_url=img_url, category=category)
-    #     db.session.add(new_item)
-    #     db.session.commit()
+        # name = data.get('name')
+        # price = data.get('price')
+        # description = data.get('description')
+        # veg = data.get('veg')
+        # spicy = data.get('spicy')
+        # img_url = data.get('img_url')
+        # category = data.get('category')
+        # new_item = MenuItem(name=name, price=price, description=description, veg=veg, spicy=spicy, img_url=img_url, category=category)
+        # db.session.add(new_item)
+        # db.session.commit()
 
     #     generate_menu_pdf()  # Call the PDF generation function after adding the item
 
@@ -148,10 +148,13 @@ def update_menu_item(id):
         if 'img_url' in request.files:
             file = request.files['img_url']
             if file.filename != '':
-                filename = secure_filename(file.filename)
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(filepath)
-                item.img_url = filename
+                if allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(filepath)
+                    item.img_url = filename
+                else:
+                    return jsonify({'error': 'Invalid file type'}), 400
 
         db.session.commit()
 

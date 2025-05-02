@@ -103,6 +103,8 @@ function Menu() {
   if (!menuData.length)
     return <p className="text-center my-5">No menu items found.</p>;
 
+  console.log('Menu component rendered')
+
   return (
     <>
       <Container fluid>
@@ -196,9 +198,17 @@ function Menu() {
                       {items.map((item, idx) => (
                         <Col md={4} className="mb-4" key={idx}>
                           <div className="d-flex">
+                          
                             <Image
-                              src={item.imgUrl || '/images/placeholder.jpg'}
-                              // src={item.imgUrl ? `${BASE_URL}${item.imgUrl}` : '/placeholder.jpg'}
+                              // src={item.imgUrl || '/images/placeholder.jpg'}
+                              // src={item.imgUrl ? `${BASE_URL}/static/uploads/${item.imgUrl}` : 'images/placeholder.jpg'}
+                              // src={item.imgUrl.startsWith('http') ? item.imgUrl : `<span class="math-inline">\{BASE\_URL\}/static/uploads/</span>{item.imgUrl}`}
+                              // src={item.img_url.startsWith('http') || item.img_url.startsWith('/static/uploads/')
+                              //   ? item.img_url
+                              //   : `${BASE_URL}${item.img_url}`}
+                              src={item.img_url.startsWith('http')
+                                ? item.img_url
+                                : `${BASE_URL}/static/uploads/${item.img_url}`}
                               width={50}
                               height={50}
                               className="me-3 rounded"

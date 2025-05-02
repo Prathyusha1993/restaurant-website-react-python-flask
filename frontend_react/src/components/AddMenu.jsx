@@ -23,7 +23,12 @@ const AddMenu = ({ onMenuUpdated, mode='add', existingData=null, onHide, show })
     if (!String(menuFormData.price).trim()) newErrors.price = "Price is required";
     if (!menuFormData.description.trim())
       newErrors.description = "Description is required";
-    if (!menuFormData.img_url) newErrors.img_url = "Image URL is required";
+    // if (!menuFormData.img_url) newErrors.img_url = "Image URL is required";
+    if (mode === 'add' && !menuFormData.img_url) {
+      newErrors.img_url = "Image is required";
+    } else if (mode === 'edit' && menuFormData.img_url instanceof File && !menuFormData.img_url) {
+      newErrors.img_url = "Image is required"; // Optionally require a new image if a file is intended
+    }
     if (menuFormData.veg === null) newErrors.veg = "Veg Selection is required";
     if (menuFormData.spicy === null) newErrors.spicy = "Spicy selection is required";
     if (!menuFormData.category.trim())
@@ -55,13 +60,6 @@ const AddMenu = ({ onMenuUpdated, mode='add', existingData=null, onHide, show })
     e.preventDefault();
     const isValid = validateForm();
     if (!isValid) return;
-  
-    // const formattedData = {
-    //   ...menuFormData,
-    //   price: parseFloat(menuFormData.price),
-    //   veg: menuFormData.veg === true ? 1 : 0,
-    //   spicy: menuFormData.spicy === true ? 1 : 0,
-    // };
 
     const formData = new FormData();
     formData.append("name", menuFormData.name);
@@ -94,6 +92,7 @@ const AddMenu = ({ onMenuUpdated, mode='add', existingData=null, onHide, show })
       }
   
       const data = await response.json();
+      console.log("Response Data after creation:", data);
       alert(mode === 'edit' ? 'Menu item updated succesfully' : 'Menu item has been added successfully');
       setMenuFormData({
         name: "",
@@ -186,7 +185,7 @@ const AddMenu = ({ onMenuUpdated, mode='add', existingData=null, onHide, show })
                   </div>
                 )}
               <Form.Group className="mb-3" controlId="formImage">
-                <Form.Label>Image URL:</Form.Label>
+                <Form.Label>Image:</Form.Label>
                 <Form.Control
                   type="file"
                   name="img_url"
